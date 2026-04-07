@@ -20,6 +20,7 @@ targets:
         LSUIElement: true
         NSPrincipalClass: NSApplication
         NSHighResolutionCapable: true
+        NSAccessibilityUsageDescription: "DockShortcut uses accessibility to move windows between displays."
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dockshortcut.app

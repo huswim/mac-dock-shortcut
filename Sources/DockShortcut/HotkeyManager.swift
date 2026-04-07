@@ -22,8 +22,18 @@ enum ModifierOption {
 
 class HotkeyManager {
     private var hotkeyRefs: [EventHotKeyRef?] = []
+    private var displayMoveHotkeyRefs: [EventHotKeyRef?] = []
     private var eventHandlerRef: EventHandlerRef?
     var onHotkey: ((Int) -> Void)?
+    var onDisplayMove: ((Bool) -> Void)?
+
+    // Virtual keycodes for arrow keys (fixed modifier: ctrl+option+cmd)
+    private static let kVK_LeftArrow: UInt32 = 123
+    private static let kVK_RightArrow: UInt32 = 124
+    private static let displayMoveModifiers = UInt32(controlKey | optionKey | cmdKey)
+    // Hotkey IDs 100 = previous display, 101 = next display
+    private static let displayMovePrevID: UInt32 = 100
+    private static let displayMoveNextID: UInt32 = 101
 
     // Virtual keycodes for number keys 1-9, 0 (not sequential!)
     private static let keycodes: [UInt32] = [
@@ -73,10 +83,14 @@ class HotkeyManager {
             guard status == noErr else { return status }
 
             let manager = Unmanaged<HotkeyManager>.fromOpaque(userData).takeUnretainedValue()
-            let index = Int(hotkeyID.id)
+            let id = hotkeyID.id
 
             DispatchQueue.main.async {
-                manager.onHotkey?(index)
+                if id >= 100 {
+                    manager.onDisplayMove?(id == 101) // 101 = next display, 100 = previous
+                } else {
+                    manager.onHotkey?(Int(id))
+                }
             }
 
             return noErr
@@ -112,6 +126,27 @@ class HotkeyManager {
             RemoveEventHandler(handler)
             eventHandlerRef = nil
         }
+    }
+
+    func registerDisplayMoveHotkeys() {
+        let prevID = EventHotKeyID(signature: Self.signature, id: Self.displayMovePrevID)
+        var prevRef: EventHotKeyRef?
+        RegisterEventHotKey(Self.kVK_LeftArrow, Self.displayMoveModifiers, prevID, GetApplicationEventTarget(), 0, &prevRef)
+        displayMoveHotkeyRefs.append(prevRef)
+
+        let nextID = EventHotKeyID(signature: Self.signature, id: Self.displayMoveNextID)
+        var nextRef: EventHotKeyRef?
+        RegisterEventHotKey(Self.kVK_RightArrow, Self.displayMoveModifiers, nextID, GetApplicationEventTarget(), 0, &nextRef)
+        displayMoveHotkeyRefs.append(nextRef)
+    }
+
+    func unregisterDisplayMoveHotkeys() {
+        for ref in displayMoveHotkeyRefs {
+            if let ref = ref {
+                UnregisterEventHotKey(ref)
+            }
+        }
+        displayMoveHotkeyRefs.removeAll()
     }
 
     deinit {

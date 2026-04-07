@@ -8,6 +8,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private static let modifierKeyDefaultsKey = "modifierKey"
     private static let modifierCtrlOnly = "ctrl"
+    private static let displayMoveEnabledKey = "displayMoveEnabled"
+
+    private var isDisplayMoveEnabled: Bool {
+        get { UserDefaults.standard.bool(forKey: Self.displayMoveEnabledKey) }
+        set { UserDefaults.standard.set(newValue, forKey: Self.displayMoveEnabledKey) }
+    }
 
     private var currentModifier: ModifierOption {
         UserDefaults.standard.string(forKey: Self.modifierKeyDefaultsKey) == Self.modifierCtrlOnly
@@ -38,7 +44,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         hotkeyManager.onHotkey = { [weak self] index in
             self?.handleHotkey(index: index)
         }
+        hotkeyManager.onDisplayMove = { next in
+            DisplayMover.move(next: next)
+        }
         hotkeyManager.register(modifier: currentModifier)
+        if isDisplayMoveEnabled {
+            hotkeyManager.registerDisplayMoveHotkeys()
+        }
     }
 
     func menuWillOpen(_ menu: NSMenu) {
@@ -62,6 +74,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             item.isEnabled = false
             menu.addItem(item)
         }
+
+        menu.addItem(NSMenuItem.separator())
+
+        let displayMoveItem = NSMenuItem(
+            title: "Move Window to Display  ⌃⌥⌘←/→",
+            action: #selector(toggleDisplayMove),
+            keyEquivalent: ""
+        )
+        displayMoveItem.state = isDisplayMoveEnabled ? .on : .off
+        menu.addItem(displayMoveItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -109,6 +131,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         AppLauncher.launchOrActivate(bundleIdentifier: apps[index].bundleIdentifier)
     }
 
+    @objc private func toggleDisplayMove() {
+        isDisplayMoveEnabled.toggle()
+        if isDisplayMoveEnabled {
+            hotkeyManager.registerDisplayMoveHotkeys()
+        } else {
+            hotkeyManager.unregisterDisplayMoveHotkeys()
+        }
+        if let menu = statusItem.menu { rebuildMenu(menu) }
+    }
+
     @objc private func setModifierCtrlOption() {
         UserDefaults.standard.removeObject(forKey: Self.modifierKeyDefaultsKey)
         reregisterHotkeys()
@@ -122,6 +154,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func reregisterHotkeys() {
         hotkeyManager.unregister()
         hotkeyManager.register(modifier: currentModifier)
+        if isDisplayMoveEnabled {
+            hotkeyManager.registerDisplayMoveHotkeys()
+        }
         if let menu = statusItem.menu {
             rebuildMenu(menu)
         }
