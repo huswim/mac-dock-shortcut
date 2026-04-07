@@ -5,7 +5,7 @@ enum AppLauncher {
         if let running = NSWorkspace.shared.runningApplications.first(where: {
             $0.bundleIdentifier == bundleIdentifier
         }) {
-            if running.isActive {
+            if running.isActive && hasVisibleWindows(pid: running.processIdentifier) {
                 running.hide()
             } else {
                 // Use openApplication to activate — this also sends the "reopen"
@@ -18,6 +18,22 @@ enum AppLauncher {
 
         // App not running — launch it
         openApp(bundleIdentifier: bundleIdentifier)
+    }
+
+    private static func hasVisibleWindows(pid: pid_t) -> Bool {
+        guard let windowList = CGWindowListCopyWindowInfo(
+            [.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID
+        ) as? [[String: Any]] else {
+            return false
+        }
+        return windowList.contains { info in
+            guard let windowPID = info[kCGWindowOwnerPID as String] as? pid_t,
+                  let layer = info[kCGWindowLayer as String] as? Int else {
+                return false
+            }
+            // Layer 0 = normal windows (not menu bar, dock, etc.)
+            return windowPID == pid && layer == 0
+        }
     }
 
     private static func openApp(bundleIdentifier: String) {
