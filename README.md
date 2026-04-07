@@ -1,6 +1,8 @@
-# DockShortcut
+# DockShortcut (v0.1.0)
 
 A macOS menu bar app that lets you launch or switch to Dock apps using keyboard shortcuts.
+
+[Download v0.1.0](https://github.com/hyeonuk/mac-dock-shortcut/releases/latest)
 
 | Shortcut | Dock Position |
 |----------|---------------|
