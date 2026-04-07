@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem!
@@ -54,7 +55,31 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
 
         menu.addItem(NSMenuItem.separator())
+
+        if #available(macOS 13.0, *) {
+            let launchItem = NSMenuItem(title: "Launch at Login", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
+            launchItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
+            menu.addItem(launchItem)
+        }
+
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q"))
+    }
+
+    @available(macOS 13.0, *)
+    @objc private func toggleLaunchAtLogin() {
+        let service = SMAppService.mainApp
+        do {
+            if service.status == .enabled {
+                try service.unregister()
+            } else {
+                try service.register()
+            }
+        } catch {
+            let alert = NSAlert()
+            alert.messageText = "Failed to toggle launch at login"
+            alert.informativeText = error.localizedDescription
+            alert.runModal()
+        }
     }
 
     private func handleHotkey(index: Int) {
