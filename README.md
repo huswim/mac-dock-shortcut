@@ -17,6 +17,20 @@ A macOS menu bar app that lets you launch or switch to Dock apps using keyboard 
 | `Ctrl+Option+9` | 9th app |
 | `Ctrl+Option+0` | 10th app |
 
+## Security (macOS Gatekeeper)
+
+Because this app is not signed with an Apple Developer certificate, macOS will show a warning: *"Apple could not verify “DockShortcut” is free of malware..."*
+
+To run the app:
+1. Locate `DockShortcut` in Finder.
+2. **Right-click** (or Control-click) the app and choose **Open**.
+3. Click **Open** in the dialog that appears.
+
+Alternatively, you can remove the quarantine flag via Terminal:
+```bash
+xattr -d com.apple.quarantine /path/to/DockShortcut
+```
+
 ## Requirements
 
 - macOS 12+
