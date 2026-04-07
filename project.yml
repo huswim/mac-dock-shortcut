@@ -1,0 +1,33 @@
+name: DockShortcut
+options:
+  bundleIdPrefix: com.dockshortcut
+  deploymentTarget:
+    macOS: "12.0"
+
+targets:
+  DockShortcut:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/DockShortcut
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: DockShortcut
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        LSMinimumSystemVersion: "$(MACOSX_DEPLOYMENT_TARGET)"
+        LSUIElement: true
+        NSPrincipalClass: NSApplication
+        NSHighResolutionCapable: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dockshortcut.app
+        MARKETING_VERSION: 0.1.0
+        CURRENT_PROJECT_VERSION: 1
+        SWIFT_VERSION: 5.9
+        MACOSX_DEPLOYMENT_TARGET: "12.0"
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"
+        ENABLE_HARDENED_RUNTIME: NO
+        ENABLE_APP_SANDBOX: NO
