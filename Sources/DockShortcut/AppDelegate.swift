@@ -1,5 +1,4 @@
 import AppKit
-import Carbon
 import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
@@ -10,16 +9,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private static let modifierKeyDefaultsKey = "modifierKey"
     private static let modifierCtrlOnly = "ctrl"
 
-    private var useCtrlOnly: Bool {
+    private var currentModifier: ModifierOption {
         UserDefaults.standard.string(forKey: Self.modifierKeyDefaultsKey) == Self.modifierCtrlOnly
-    }
-
-    private func currentModifiers() -> UInt32 {
-        useCtrlOnly ? UInt32(controlKey) : UInt32(controlKey | optionKey)
-    }
-
-    private func modifierSymbols() -> String {
-        useCtrlOnly ? "⌃" : "⌃⌥"
+            ? .controlOnly : .controlOption
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -46,7 +38,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         hotkeyManager.onHotkey = { [weak self] index in
             self?.handleHotkey(index: index)
         }
-        hotkeyManager.register(modifiers: currentModifiers())
+        hotkeyManager.register(modifier: currentModifier)
     }
 
     func menuWillOpen(_ menu: NSMenu) {
@@ -57,7 +49,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func rebuildMenu(_ menu: NSMenu) {
         menu.removeAllItems()
 
-        let symbols = modifierSymbols()
+        let symbols = currentModifier.symbols
         for (i, app) in dockApps.enumerated() {
             let key = i < 9 ? "\(i + 1)" : "0"
             let item = NSMenuItem(title: "\(symbols)\(key)  \(app.label)", action: nil, keyEquivalent: "")
@@ -75,10 +67,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         let modifierMenu = NSMenu()
         let ctrlOptionItem = NSMenuItem(title: "⌃⌥  Control+Option (default)", action: #selector(setModifierCtrlOption), keyEquivalent: "")
-        ctrlOptionItem.state = useCtrlOnly ? .off : .on
+        ctrlOptionItem.state = currentModifier == .controlOption ? .on : .off
         modifierMenu.addItem(ctrlOptionItem)
         let ctrlOnlyItem = NSMenuItem(title: "⌃  Control only", action: #selector(setModifierCtrlOnly), keyEquivalent: "")
-        ctrlOnlyItem.state = useCtrlOnly ? .on : .off
+        ctrlOnlyItem.state = currentModifier == .controlOnly ? .on : .off
         modifierMenu.addItem(ctrlOnlyItem)
         let modifierParent = NSMenuItem(title: "Modifier Key", action: nil, keyEquivalent: "")
         modifierParent.submenu = modifierMenu
@@ -129,7 +121,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func reregisterHotkeys() {
         hotkeyManager.unregister()
-        hotkeyManager.register(modifiers: currentModifiers())
+        hotkeyManager.register(modifier: currentModifier)
         if let menu = statusItem.menu {
             rebuildMenu(menu)
         }

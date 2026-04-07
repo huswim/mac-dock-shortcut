@@ -1,6 +1,25 @@
 import Carbon
 import Foundation
 
+enum ModifierOption {
+    case controlOption
+    case controlOnly
+
+    var flags: UInt32 {
+        switch self {
+        case .controlOption: return UInt32(controlKey | optionKey)
+        case .controlOnly:   return UInt32(controlKey)
+        }
+    }
+
+    var symbols: String {
+        switch self {
+        case .controlOption: return "⌃⌥"
+        case .controlOnly:   return "⌃"
+        }
+    }
+}
+
 class HotkeyManager {
     private var hotkeyRefs: [EventHotKeyRef?] = []
     private var eventHandlerRef: EventHandlerRef?
@@ -26,7 +45,8 @@ class HotkeyManager {
                FourCharCode(chars[2]) << 8 | FourCharCode(chars[3])
     }()
 
-    func register(modifiers: UInt32 = UInt32(controlKey | optionKey)) {
+    func register(modifier: ModifierOption = .controlOption) {
+        let modifiers = modifier.flags
         let selfPtr = Unmanaged.passUnretained(self).toOpaque()
 
         var eventType = EventTypeSpec(
