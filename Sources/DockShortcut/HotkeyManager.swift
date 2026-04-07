@@ -26,7 +26,7 @@ class HotkeyManager {
                FourCharCode(chars[2]) << 8 | FourCharCode(chars[3])
     }()
 
-    func register() {
+    func register(modifiers: UInt32 = UInt32(controlKey | optionKey)) {
         let selfPtr = Unmanaged.passUnretained(self).toOpaque()
 
         var eventType = EventTypeSpec(
@@ -70,8 +70,6 @@ class HotkeyManager {
             selfPtr,
             &eventHandlerRef
         )
-
-        let modifiers = UInt32(controlKey | optionKey)
 
         for (index, keycode) in Self.keycodes.enumerated() {
             let hotkeyID = EventHotKeyID(signature: Self.signature, id: UInt32(index))

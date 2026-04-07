@@ -1,25 +1,38 @@
-# DockShortcut (v0.1.1)
+# DockShortcut (v0.2.2)
 
 A macOS menu bar app that lets you launch or switch to Dock apps using keyboard shortcuts.
 
-[Download v0.1.1](https://github.com/hyeonuk/mac-dock-shortcut/releases/latest)
+[Download v0.2.2](https://github.com/hyeonuk/mac-dock-shortcut/releases/latest)
+
+## Shortcuts
+
+The modifier key is configurable via the menu bar icon (default: `Ctrl+Option`):
 
 | Shortcut | Dock Position |
 |----------|---------------|
-| `Ctrl+Option+1` | 1st app |
-| `Ctrl+Option+2` | 2nd app |
-| `Ctrl+Option+3` | 3rd app |
-| `Ctrl+Option+4` | 4th app |
-| `Ctrl+Option+5` | 5th app |
-| `Ctrl+Option+6` | 6th app |
-| `Ctrl+Option+7` | 7th app |
-| `Ctrl+Option+8` | 8th app |
-| `Ctrl+Option+9` | 9th app |
-| `Ctrl+Option+0` | 10th app |
+| `Modifier+1` | 1st app |
+| `Modifier+2` | 2nd app |
+| `Modifier+3` | 3rd app |
+| `Modifier+4` | 4th app |
+| `Modifier+5` | 5th app |
+| `Modifier+6` | 6th app |
+| `Modifier+7` | 7th app |
+| `Modifier+8` | 8th app |
+| `Modifier+9` | 9th app |
+| `Modifier+0` | 10th app |
+
+### Modifier Key Options
+
+| Option | Keys |
+|--------|------|
+| Control+Option (default) | `⌃⌥` |
+| Control only | `⌃` |
+
+Change the modifier via **menu bar icon → Modifier Key**.
 
 ## Security (macOS Gatekeeper)
 
-Because this app is not signed with an Apple Developer certificate, macOS will show a warning: *"Apple could not verify “DockShortcut” is free of malware..."*
+Because this app is not signed with an Apple Developer certificate, macOS will show a warning: *"Apple could not verify "DockShortcut" is free of malware..."*
 
 To run the app:
 1. Locate `DockShortcut` in Finder.
@@ -28,27 +41,21 @@ To run the app:
 
 Alternatively, you can remove the quarantine flag via Terminal:
 ```bash
-xattr -d com.apple.quarantine /path/to/DockShortcut
+xattr -d com.apple.quarantine /path/to/DockShortcut.app
 ```
 
 ## Requirements
 
 - macOS 12+
-- Swift 5.9+
+- Xcode 16+
 
 ## Build & Run
 
 ```bash
-swift build
-swift run DockShortcut
+xcodebuild -project DockShortcut.xcodeproj -scheme DockShortcut -configuration Release build
 ```
 
-For a release build:
-
-```bash
-swift build -c release
-.build/release/DockShortcut
-```
+Or open `DockShortcut.xcodeproj` in Xcode and run with `Cmd+R`.
 
 ## How It Works
 
@@ -58,3 +65,4 @@ swift build -c release
 - Runs as a menu bar app with no Dock icon (`LSUIElement`)
 - Click the menu bar icon to see the current shortcut-to-app mappings
 - Dock changes are picked up automatically when you open the menu
+- Modifier key preference (Control+Option or Control only) is persisted across restarts
