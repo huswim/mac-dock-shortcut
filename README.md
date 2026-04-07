@@ -2,7 +2,7 @@
 
 A macOS menu bar app that lets you launch or switch to Dock apps using keyboard shortcuts.
 
-[Download v0.2.2](https://github.com/hyeonuk/mac-dock-shortcut/releases/latest)
+Install via [Homebrew](#homebrew-recommended) or [download manually](#manual).
 
 ## Shortcuts
 
@@ -29,6 +29,18 @@ The modifier key is configurable via the menu bar icon (default: `Ctrl+Option`):
 | Control only | `⌃` |
 
 Change the modifier via **menu bar icon → Modifier Key**.
+
+## Installation
+
+### Homebrew (recommended)
+
+```bash
+brew install --cask huswim/tools/dock-shortcut
+```
+
+### Manual
+
+[Download the latest release](https://github.com/hyeonuk/mac-dock-shortcut/releases/latest) and move `DockShortcut.app` to `/Applications`.
 
 ## Security (macOS Gatekeeper)
 
