@@ -30,6 +30,11 @@ The modifier key is configurable via the menu bar icon (default: `Ctrl+Option`):
 
 Change the modifier via **menu bar icon → Modifier Key**.
 
+## Menu Bar Icon
+
+You can hide the DockShortcut menu bar icon via **menu bar icon → Hide Menu Bar Icon**.
+Shortcuts keep working while the icon is hidden. To show the icon again, open `DockShortcut` from Finder or Spotlight.
+
 ## Installation
 
 ### Homebrew (recommended)
@@ -76,5 +81,6 @@ Or open `DockShortcut.xcodeproj` in Xcode and run with `Cmd+R`.
 - Launches or activates apps via `NSWorkspace`
 - Runs as a menu bar app with no Dock icon (`LSUIElement`)
 - Click the menu bar icon to see the current shortcut-to-app mappings
+- Menu bar icon visibility preference is persisted across restarts
 - Dock changes are picked up automatically when you open the menu
 - Modifier key preference (Control+Option or Control only) is persisted across restarts

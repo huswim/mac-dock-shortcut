@@ -2,43 +2,43 @@ import AppKit
 import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
-    private var statusItem: NSStatusItem!
+    private var statusItem: NSStatusItem?
     private let hotkeyManager = HotkeyManager()
     private var dockApps: [DockApp] = []
 
     private static let modifierKeyDefaultsKey = "modifierKey"
     private static let modifierCtrlOnly = "ctrl"
+    private static let hideMenuBarIconDefaultsKey = "hideMenuBarIcon"
 
     private var currentModifier: ModifierOption {
         UserDefaults.standard.string(forKey: Self.modifierKeyDefaultsKey) == Self.modifierCtrlOnly
             ? .controlOnly : .controlOption
     }
 
+    private var isMenuBarIconHidden: Bool {
+        UserDefaults.standard.bool(forKey: Self.hideMenuBarIconDefaultsKey)
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         dockApps = DockReader.readDockApps()
-
-        // Set up status bar item
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        if let button = statusItem.button {
-            if let image = NSImage(systemSymbolName: "dock.rectangle", accessibilityDescription: "DockShortcut") {
-                image.isTemplate = true
-                button.image = image
-            } else {
-                button.title = "DS"
-            }
+        if !isMenuBarIconHidden {
+            showMenuBarIcon()
         }
-
-        // Build menu
-        let menu = NSMenu()
-        menu.delegate = self
-        statusItem.menu = menu
-        rebuildMenu(menu)
 
         // Register hotkeys
         hotkeyManager.onHotkey = { [weak self] index in
             self?.handleHotkey(index: index)
         }
         hotkeyManager.register(modifier: currentModifier)
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if isMenuBarIconHidden {
+            UserDefaults.standard.set(false, forKey: Self.hideMenuBarIconDefaultsKey)
+            showMenuBarIcon()
+        }
+
+        return true
     }
 
     func menuWillOpen(_ menu: NSMenu) {
@@ -82,7 +82,50 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             menu.addItem(launchItem)
         }
 
+        let hideIconItem = NSMenuItem(title: "Hide Menu Bar Icon", action: #selector(hideMenuBarIcon), keyEquivalent: "")
+        menu.addItem(hideIconItem)
+
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q"))
+    }
+
+    private func showMenuBarIcon() {
+        if statusItem != nil { return }
+
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        if let button = item.button {
+            if let image = NSImage(systemSymbolName: "dock.rectangle", accessibilityDescription: "DockShortcut") {
+                image.isTemplate = true
+                button.image = image
+            } else {
+                button.title = "DS"
+            }
+        }
+
+        let menu = NSMenu()
+        menu.delegate = self
+        item.menu = menu
+        statusItem = item
+        rebuildMenu(menu)
+    }
+
+    private func removeMenuBarIcon() {
+        if let item = statusItem {
+            NSStatusBar.system.removeStatusItem(item)
+            statusItem = nil
+        }
+    }
+
+    @objc private func hideMenuBarIcon() {
+        let alert = NSAlert()
+        alert.messageText = "Hide menu bar icon?"
+        alert.informativeText = "DockShortcut will keep running and shortcuts will still work. To show the icon again, open DockShortcut from Finder or Spotlight."
+        alert.addButton(withTitle: "Hide")
+        alert.addButton(withTitle: "Cancel")
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+
+        UserDefaults.standard.set(true, forKey: Self.hideMenuBarIconDefaultsKey)
+        removeMenuBarIcon()
     }
 
     @available(macOS 13.0, *)
@@ -122,7 +165,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func reregisterHotkeys() {
         hotkeyManager.unregister()
         hotkeyManager.register(modifier: currentModifier)
-        if let menu = statusItem.menu {
+        if let menu = statusItem?.menu {
             rebuildMenu(menu)
         }
     }
