@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B8B8C4A2E7844E2B3F4E65C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A1C11E0CBB44B30A9E9AD97 /* Assets.xcassets */; };
 		3A453E8097716DAA4E83F434 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2142301E9E8B29D93ECBF379 /* HotkeyManager.swift */; };
 		4373ACF76B0325D7B7CF94EA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0339810E3B841964982832 /* AppDelegate.swift */; };
 		6C8A2E86652F670BCFD962F4 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E404433F0480C51DB8D600E0 /* main.swift */; };
@@ -18,6 +19,7 @@
 		2142301E9E8B29D93ECBF379 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		2944DC55AFB3984D2A23DB03 /* AppLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLauncher.swift; sourceTree = "<group>"; };
 		69FB37319B4FAC0250BFECAD /* DockShortcut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DockShortcut.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A1C11E0CBB44B30A9E9AD97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		9F0339810E3B841964982832 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E404433F0480C51DB8D600E0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		E5DAF80A2B1C8ABED5083B3F /* DockReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockReader.swift; sourceTree = "<group>"; };
@@ -48,6 +50,7 @@
 				E5DAF80A2B1C8ABED5083B3F /* DockReader.swift */,
 				2142301E9E8B29D93ECBF379 /* HotkeyManager.swift */,
 				E404433F0480C51DB8D600E0 /* main.swift */,
+				9A1C11E0CBB44B30A9E9AD97 /* Assets.xcassets */,
 			);
 			name = DockShortcut;
 			path = Sources/DockShortcut;
@@ -61,6 +64,7 @@
 			buildConfigurationList = 52FBF7010B79CCFF1F7C37EF /* Build configuration list for PBXNativeTarget "DockShortcut" */;
 			buildPhases = (
 				353B82C4F7698EDB751D6816 /* Sources */,
+				9C86119368964906B3323DFA /* Resources */,
 			);
 			buildRules = (
 			);
@@ -105,6 +109,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9C86119368964906B3323DFA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8B8C4A2E7844E2B3F4E65C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		353B82C4F7698EDB751D6816 /* Sources */ = {
